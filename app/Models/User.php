@@ -17,11 +17,7 @@ class User extends Authenticatable
      *
      * @var list<string>
      */
-    protected $fillable = [
-        'name',
-        'email',
-        'password',
-    ];
+    protected $guarded = [];
 
     /**
      * The attributes that should be hidden for serialization.
@@ -29,7 +25,7 @@ class User extends Authenticatable
      * @var list<string>
      */
     protected $hidden = [
-        'password',
+        'mot_de_passe',
         'remember_token',
     ];
 
@@ -42,7 +38,40 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
+            'mot_de_passe' => 'hashed',
         ];
+    }
+
+     /**
+     * Relation one-to-many: Un utilisateur peut ajouter plusieurs produits.
+     */
+    public function produits()
+    {
+        return $this->hasMany(Produit::class, 'user_id');
+    }
+
+      /**
+     * Relation one-to-many: Un utilisateur peut commenter plusieurs fois.
+     */
+    public function commentaires()
+    {
+        return $this->hasMany(Commentaire::class, 'user_id');
+    }
+
+    /**
+     * Relation many-to-many : Un utilisateur peut commander plusieurs produits via la table pivot 'commandes'.
+     */
+    public function commandes()
+    {
+        return $this->belongsToMany(Produit::class, 'commandes')
+                    ->withPivot('statut', 'created_at', 'updated_at');
+    }
+
+     /**
+     * Relation one-to-many: Un utilisateur peut livrer plusieurs livraisons.
+     */
+    public function livraisons()
+    {
+        return $this->hasMany(Livraison::class, 'user_id');
     }
 }
