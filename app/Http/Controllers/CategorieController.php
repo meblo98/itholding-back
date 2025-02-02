@@ -9,58 +9,107 @@ use App\Models\Categorie;
 class CategorieController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Afficher la liste des categories
      */
     public function index()
     {
-        //
+        // Récupérer uniquement les noms des catégories
+        $categories = Categorie::pluck('nom');
+    
+        return response()->json([
+            'message' => 'La liste des catégories',
+            'categories' => $categories,
+        ], 200);
     }
-
+    
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
+     * Ajouter une categorie
      */
     public function store(StoreCategorieRequest $request)
     {
-        //
+        // Créer une nouvelle catégorie en BDD à partir des données du formulaire
+        $categorie = Categorie::create($request->all());
+
+        // Renvoyer un message de confirmation en JSON
+        return response() ->json([
+           'message' => 'La categorie a été créée avec succès',
+           'categorie' => $categorie,
+        ],201);
     }
 
     /**
-     * Display the specified resource.
+     * Voir les details d'une categorie
      */
-    public function show(Categorie $categorie)
+    public function show($id)
     {
-        //
+        // Récupérer la catégorie en fonction de l'ID
+        $categorie = Categorie::find($id);
+    
+        // Vérifier si la catégorie existe
+        if (!$categorie) {
+            return response()->json([
+                'message' => 'Catégorie non trouvée',
+            ], 404);
+        }
+    
+        // Renvoyer les détails de la catégorie en JSON
+        return response()->json([
+            'message' => 'Les détails de la catégorie',
+            'categorie' => $categorie,
+        ], 200);
     }
+    
+
+   
 
     /**
-     * Show the form for editing the specified resource.
+     * Modifier les informations d'une categorie
      */
-    public function edit(Categorie $categorie)
+    public function update(UpdateCategorieRequest $request, $id)
     {
-        //
+        // Récupérer la catégorie en fonction de l'ID
+        $categorie = Categorie::find($id);
+    
+        // Vérifier si la catégorie existe
+        if (!$categorie) {
+            return response()->json([
+                'message' => 'Catégorie non trouvée',
+            ], 404);
+        }
+    
+        // Mettre à jour les informations de la catégorie
+        $categorie->update($request->all());
+    
+        // Renvoyer un message de confirmation en JSON
+        return response()->json([
+            'message' => 'Les informations de la catégorie ont été modifiées avec succès',
+            'categorie' => $categorie,
+        ], 200);
     }
+    
 
     /**
-     * Update the specified resource in storage.
+     * Supprimer une catégorie
      */
-    public function update(UpdateCategorieRequest $request, Categorie $categorie)
+    public function destroy($id)
     {
-        //
+        // Récupérer la catégorie en fonction de l'ID
+        $categorie = Categorie::find($id);
+    
+        // Vérifier si la catégorie existe
+        if (!$categorie) {
+            return response()->json([
+                'message' => 'Catégorie non trouvée',
+            ], 404);
+        }
+    
+        // Supprimer la catégorie
+        $categorie->delete();
+    
+        // Renvoyer un message de confirmation en JSON
+        return response()->json([
+            'message' => 'La catégorie a été supprimée avec succès',
+        ], 200);
     }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Categorie $categorie)
-    {
-        //
-    }
+    
 }
