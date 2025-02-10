@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('stock');
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('categorie_id');
-            $table->unsignedBigInteger('promotion_id');
+            $table->unsignedBigInteger('promotion_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('categorie_id')->references('id')->on('categories');
             $table->foreign('promotion_id')->references('id')->on('promotions');
